@@ -199,7 +199,7 @@ Em adição a alguns novos pacotes que vão ser utilizados para preprocessamento
 
 Esses metodos são referentes a comunicação com o nosso outro serviço, o "model_service". Primeiramente nós definimos algumas propriedades do nosso modelo como nome (experiment_id), e qual a camada de entrada e de saida do modelo. Fazemos isso pois essa informação é necessaria ao realizar um request para a imagem do tenserflow serving. Em seguida criamos o stub, isso é o canal de comunicação entre nosso serviço de pre-processamento e o serviço de modelo. Por fim definimos o request GRPC, passando as informações do modelo e a imagem a ser classificada.
 
-![Model_Runner3.py](/images/model_service2.png "Segunda parte do arquivo model_runner.py.")
+![Model_Runner3.py](/images/model_service3.png "Segunda parte do arquivo model_runner.py.")
 
 52-63: Preprocessamento da imagem utilizando o pacote PIL.
 
