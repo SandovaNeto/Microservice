@@ -1,6 +1,6 @@
 # Criação de microserviços com IA, utilizando Python.
 
-Este respositorio tem o proposito de servir como acompanhamento para o minicurso ministrado na SDC, que aborda a criação de microserviços com IA, utilizando Python.
+Este respositorio tem o proposito de servir como acompanhamento para o minicurso ministrado na SDC, que aborda a criação de microserviços com IA, utilizando Python. O tema do minicurso vai ser o desenvolvimento de um microserviço capaz de classificar corretamente uma imagem em duas classes, Gato ou Cachorro. Seram utilizados alguns pacotes como tensorflow, grpc. A API sera criada utilizando FastAPI. Esse ReadMe tem a função de servir tambem como um guia de acompanhamento para o minicurso e vai ficar disponivel para o futuro, caso você queira rever algo quando desejar estudar novamente.
 
 ## Overview
 
@@ -52,7 +52,7 @@ Com a possibilidade de uso de extenções o Visual Studio Code vai ser utilizado
 
 O Visual Studio Code pode ser obtido [aqui](https://code.visualstudio.com/).
 
-###
+### Organizando o ambiente
 
 Por fim, com todos os requisitos, vamos organizar nosso ambiente de desenvolvimento para o minicurso.
 
@@ -76,6 +76,8 @@ Por fim, com todos os requisitos, vamos organizar nosso ambiente de desenvolvime
 5. Busque e intale as extenções: Docker, Python e Pylance. Todas fornecidas pela Microsoft. Caso necessario reinicie o Visual Studio Code.
 
 6. Com o Visual Studio Code abra a pasta cat_dog_classification (Ctrl+K+O) do repositorio baixado.
+
+7. Pressione Ctrl + Shit + P, e selecione a opção "Select Interpreter", em seguida selecione o ambiente "minicurso".
 
 Pronto, com isso o seu ambiente deve estar configurado e podemos prosseguir.
 
@@ -143,3 +145,133 @@ Nesse arquivo temos:
 24-25: Declaração da rede interna.
 
 Com os arquivos de configuração finalizados podemos então passar para a proxima etapa a de desenvolvimento.
+
+
+## Desenvolvimento do microsserviço.
+
+Como mencionado anteriormente a parte de preprocessamento do nosso microserviço vai ser executado num container docker exclusivo. Nos configuramos esse arquivo Dockerfile no passo anterior. Agora é o momento de desenvolver nosso microsserviço. Para isso navegue até o diretorio "app->preprocess_service->app". Aqui você vai ver os seguintes arquivos:
+
+1. app_server.py: É aqui que vamos definir o nosso microsserviço, o que acontece quando uma nova requisição é recebida e qual o retorno deve ser dado no fim.
+2. model_runner.py: Aqui estão os metodos referentes a integração com o container do modelo. Neste arquivo que são definidas as funções que fazem a classificação com o modelo de inteligencia artificial.
+3. utils.py: O arquivo de utils tem algumas funções de preprocessamento. A fim de melhorar a legibilidade do codigo, essas funções foram separadas em um arquivo diferente do aoo_server.py
+
+Vamos falar um pouco mais sobre cada um desses arquivos separamente, a começar com o app_server.py, o nucleo principal do nosso microserviço. Primeiramente vamos começar com os imports, e a definiçaõ de algumas classes e Enums.
+
+***Inserir Imagem***
+
+Uma descrição do codigo linha por linha é:
+
+1-8: Import das bibliotecas utilizadas.
+
+10-28: Definição de diversas Classses e Enums que são uteis no processo de desenvolvimento.
+
+31: Instanciação de um objeto da classe ModelRunner, responsavel por realizar a comunicação com o modelo de IA.
+
+Em seguida vamos propriamente definir a nossa API e o fluxo a ser executado uma vez que um request for recebido.
+
+***Inserir Imagem***
+
+34: Criando a API com FastAPI.
+
+37-38: Definindo o Endpoint.
+
+40-45: Confirmando que a imagem é uma imagem valida, caso contrario retornamos um erro.
+
+47-50: Caso seja uma imagem valida realizamos a classificação e retornamos o resultado.
+
+53-54: Executar a nossa API.
+
+Com isso temos a nosa API de preprocessamento definida. Vamos agora partir para o arquivo model_runner.py onde é definida a comunicação entre o container de preprocessamento e o container do modelo. Ja podemos notar algumas diferenças em relação ao arquivo anterior ja na parte de imports
+
+***Inserir Imagem***
+
+Em adição a alguns novos pacotes que vão ser utilizados para preprocessamento e utilidades como os, yaml, pprint, base64, numpy e PIL, temos tambem a presença de alguns pacotes ja vistos anteriormente como fastAPI e pydantic. Tambem temos agora alguns pacotes provenientes do tensorflow, estes vãos er utilizados para realizar a comunicação entre o os dois serviços (model_service e preprocess_service). Seguindo é possivel notar que todo este arquivo é a definição da classe ModelRunner e seus metodos.
+
+***Inserir Imagem***
+
+19-25: Definiçaõd o Init da classe.
+
+27-35: Metodo de definição das configuraçoes do modelo.
+
+37-43: Metodo de criação do stub.
+
+45-50: Metodo de criação do request GRPC.
+
+Esses metodos são referentes a comunicação com o nosso outro serviço, o "model_service". Primeiramente nós definimos algumas propriedades do nosso modelo como nome (experiment_id), e qual a camada de entrada e de saida do modelo. Fazemos isso pois essa informação é necessaria ao realizar um request para a imagem do tenserflow serving. Em seguida criamos o stub, isso é o canal de comunicação entre nosso serviço de pre-processamento e o serviço de modelo. Por fim definimos o request GRPC, passando as informações do modelo e a imagem a ser classificada.
+
+***Inserir Imagem***
+
+52-63: Preprocessamento da imagem utilizando o pacote PIL.
+
+65-82: Fluxo completo de uma requisição para o model_service, com processamento do resultado.
+
+Esses dois ultimos metodos focam em processar a entrada e saida do nosso request. Primeiramente fazemos o preprocessamento necessario na imagem em base64, como resize e normalização. Em seguida definimos o fluxo completo, instanciando o preprocessamento da imagem, criação do grpc request e processando o resultado do nosso classificador.
+
+Por fim, vamos partir par o arquivo utils.py, aqui são definidas funções auxiliares utilizadas ao longo dos nossos serviços.
+
+***Inserir Imagem***
+
+1-4: Importando os pacotes.
+
+7-12: Metodo que verifica se um base64 é valido.
+
+15-20: Metodo que converte uma imagem para o formato base64.
+
+23-28: Metodo que converte um base64 para uma imagem.
+
+Uma vez desenvolvido nosso modelo, podemos subir as imagens docker com os serviços. Para fazer isso clique com o botão direito no arquivo "docker-compose.yml" e selecione a opção "Compose Up". Apos um tempo as imagens devem ser levantadas com sucesso. O "Compose Up" faz o equivalente ao comando docker:
+
+        $ docker-compose -f "app\docker-compose.yml" up -d --build
+        
+Vamos passar para o ultimo estagio no ciclo de criação de um micorsserviço, os testes, uma vez criados poderemos ver nosso serviço em ação.
+
+## Criação de testes.
+
+
+
+Testar o microserviço é uma etapa importante no ciclo de produção. Os testes não só nos ajudam a identificar erros quanto servem para manter o microserviço funcionando a medida que novas verções vão surgindo. Para criarmos os testes em python vamos fazer uso do pacote unittest.
+
+Os testes devem estar contidos no diretorio "unit_test", aqui temos dois arquivos, o "utils.py" e o "localhost_test.py". O primeiro assim como no serviço contem algumas funções auxiliares. Enquanto o segundo define os testes. Vamos começar vendo o arquivo "utils.py".
+
+***Inserir Imagem***
+
+Uma descrição a cada linha pode ser dada por:
+
+1-5: Imports de pacotes.
+
+7-8: Definição do endpoint para realização dos testes.
+
+11-22: Definição do metodo que realiza o request.
+
+Neste arqui você pode definir quaisquer outros metodos que seus testes utilizem. Agora vamos passar para o arquivo "localhost_test.py"
+
+***Inserir Imagem 1 e 2***
+
+Vendo cada linha de codigo temos:
+
+1-4 Imports dos pacotes.
+
+6: Definição da classe de teste.
+
+8-38: Definição dos casos de teste individuais.
+
+41-42: Executar os testes.
+
+Com os testes definidos podemos executa-los direto do Visual Studio Code. Para executar os testes realize os seguintes passos:
+
+1. Primeiramente no Visual Studio Code abra o diretorio "cat_dog_classification" (Ctrl+K+O). 
+2. Pressione Ctrl + Shit + P, e selecione a opção "Python:Select Interpreter", em seguida selecione o ambiente "minicurso".
+3. Pressione Ctrl + Shit + P novamente e agora selecione a opção "Python:Configure Tests", em seguida selecione "unittest", "unittest" novamente e por fim "* test *.py".
+4. Navege na barra lateral esquerda para a aba de Testing abaixo da aba de extensões.
+
+Voce deve ver algo como:
+
+***Inserir Imagem***
+
+Para executar os testes basta clicar no icone triangular que aparece ao lado do nome de cada teste uma vez que você aproxima o cursor.
+
+## Considerações Finais
+
+Este é o fim da aprensentação, note que ainda existem muitas coisas abstraidas e que podem ser melhoradas nesse microserviço. Enquanto muitos dos assuntos abordados podem ser complexos é recomendado que você tire um tempo para estudar a documentação dos pacotes utilizados. Este documento e o repositorio permaneceção aqui para servir de material de estudo futuro caso seja de interesse.
+
+Obrigado pela participação de todos!
