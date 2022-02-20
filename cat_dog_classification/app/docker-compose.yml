@@ -1,0 +1,27 @@
+version: '3.3'
+services:
+  
+  cat-dog-classfication-model-service:
+    build: ./model_service
+    container_name: cat-dog-model-service
+    networks: 
+      - cat-dog-classfication-net
+    ports:
+      - 8500
+      - 8501    
+    
+  cat-dog-preprocess-service:
+    build: ./preprocess_service
+    container_name: cat-dog-preprocess-service
+    environment: 
+      SERVICE_MODEL_HOST: cat-dog-model-service
+      SERVICE_MODEL_PORT: 8500
+    networks:
+      - cat-dog-classfication-net
+    ports: 
+      - 7998:7998   
+
+networks:
+  cat-dog-classfication-net:
+
+

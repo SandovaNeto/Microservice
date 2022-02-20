@@ -91,7 +91,7 @@ A outra imagem Docker é responsavel pelo proprio processamento do nosso serviç
 
 As configurações das imagens Docker podem ser encontradas navegando para o diretorio "app" e em seguida para "model_service" ou "preprocess_service", nos arquivos nomeeados "Dockerfile". Vamos primeiro focar na configuração da imagem que vai hospedar nosso modelo.
 
-***Inserir Imagem***
+![Docekrfile_model_service](/images/model_service_dockerfile.png "Arquivo Dockerfile do model_service.")
 
 Uma descrição linha por linha do codigo seria:
 
@@ -109,7 +109,7 @@ Note que dentro do diretorio "prev_trained_models" temos o modelo de classifica�
 
 Em seguida passamos para o Dockerfile da imagem do "preprocess_service".
 
-***Inserir Imagem***
+![Docekrfile_preprocess_service](/images/preprocess_service_dockerfile.png "Arquivo Dockerfile do preprocess_service.")
 
 Novamente segue o passo a passo de cada linha:
 
@@ -132,7 +132,7 @@ Novamente segue o passo a passo de cada linha:
 
 Por fim vamos configurar o arquivo docker-compose.yml que pode ser encontrado no diretorio "app". O arquivo de compose contem as configurações necessarias para a aexecução de um serviço com mais de um container. No nosso caso, como temos um container para o nosso modelo e um container para nosso serviço precisamos integrar os dois por meio deste arquivo.
 
-***Inserir Imagem***
+![Docekrfile_compose](/images/docker-compose-yml.png "Arquivo docker-compose dos microserviços.")
 
 Nesse arquivo temos:
 
@@ -157,7 +157,7 @@ Como mencionado anteriormente a parte de preprocessamento do nosso microserviço
 
 Vamos falar um pouco mais sobre cada um desses arquivos separamente, a começar com o app_server.py, o nucleo principal do nosso microserviço. Primeiramente vamos começar com os imports, e a definiçaõ de algumas classes e Enums.
 
-***Inserir Imagem***
+![App_server1.py](/images/app_server1.png "Primeira parte do arquivo app_server.py.")
 
 Uma descrição do codigo linha por linha é:
 
@@ -169,7 +169,7 @@ Uma descrição do codigo linha por linha é:
 
 Em seguida vamos propriamente definir a nossa API e o fluxo a ser executado uma vez que um request for recebido.
 
-***Inserir Imagem***
+![App_server2.py](/images/app_server2.png "Segunda parte do arquivo app_server.py.")
 
 34: Criando a API com FastAPI.
 
@@ -183,11 +183,11 @@ Em seguida vamos propriamente definir a nossa API e o fluxo a ser executado uma 
 
 Com isso temos a nosa API de preprocessamento definida. Vamos agora partir para o arquivo model_runner.py onde é definida a comunicação entre o container de preprocessamento e o container do modelo. Ja podemos notar algumas diferenças em relação ao arquivo anterior ja na parte de imports
 
-***Inserir Imagem***
+![Model_Runner1.py](/images/model_service1.png "Imports do arquivo model_runner.py.")
 
 Em adição a alguns novos pacotes que vão ser utilizados para preprocessamento e utilidades como os, yaml, pprint, base64, numpy e PIL, temos tambem a presença de alguns pacotes ja vistos anteriormente como fastAPI e pydantic. Tambem temos agora alguns pacotes provenientes do tensorflow, estes vãos er utilizados para realizar a comunicação entre o os dois serviços (model_service e preprocess_service). Seguindo é possivel notar que todo este arquivo é a definição da classe ModelRunner e seus metodos.
 
-***Inserir Imagem***
+![Model_Runner2.py](/images/model_service2.png "Primeira parte do arquivo model_runner.py.")
 
 19-25: Definiçaõd o Init da classe.
 
@@ -199,7 +199,7 @@ Em adição a alguns novos pacotes que vão ser utilizados para preprocessamento
 
 Esses metodos são referentes a comunicação com o nosso outro serviço, o "model_service". Primeiramente nós definimos algumas propriedades do nosso modelo como nome (experiment_id), e qual a camada de entrada e de saida do modelo. Fazemos isso pois essa informação é necessaria ao realizar um request para a imagem do tenserflow serving. Em seguida criamos o stub, isso é o canal de comunicação entre nosso serviço de pre-processamento e o serviço de modelo. Por fim definimos o request GRPC, passando as informações do modelo e a imagem a ser classificada.
 
-***Inserir Imagem***
+![Model_Runner3.py](/images/model_service2.png "Segunda parte do arquivo model_runner.py.")
 
 52-63: Preprocessamento da imagem utilizando o pacote PIL.
 
@@ -209,7 +209,7 @@ Esses dois ultimos metodos focam em processar a entrada e saida do nosso request
 
 Por fim, vamos partir par o arquivo utils.py, aqui são definidas funções auxiliares utilizadas ao longo dos nossos serviços.
 
-***Inserir Imagem***
+![Utils.py](/images/utils.png "Arquivo utils.py")
 
 1-4: Importando os pacotes.
 
@@ -233,7 +233,7 @@ Testar o microserviço é uma etapa importante no ciclo de produção. Os testes
 
 Os testes devem estar contidos no diretorio "unit_test", aqui temos dois arquivos, o "utils.py" e o "localhost_test.py". O primeiro assim como no serviço contem algumas funções auxiliares. Enquanto o segundo define os testes. Vamos começar vendo o arquivo "utils.py".
 
-***Inserir Imagem***
+![Test_utils.py](/images/test_utils.png "Arquivo utils.py dos testes.")
 
 Uma descrição a cada linha pode ser dada por:
 
@@ -245,7 +245,8 @@ Uma descrição a cada linha pode ser dada por:
 
 Neste arqui você pode definir quaisquer outros metodos que seus testes utilizem. Agora vamos passar para o arquivo "localhost_test.py"
 
-***Inserir Imagem 1 e 2***
+![localhost_test.py](/images/localhost1.png "Arquivo localhost_test.")
+![localhost_test.py](/images/localhost2.png "Arquivo localhost_test.")
 
 Vendo cada linha de codigo temos:
 
@@ -266,7 +267,7 @@ Com os testes definidos podemos executa-los direto do Visual Studio Code. Para e
 
 Voce deve ver algo como:
 
-***Inserir Imagem***
+![testes](/images/tests.png "Testes encontrados.")
 
 Para executar os testes basta clicar no icone triangular que aparece ao lado do nome de cada teste uma vez que você aproxima o cursor.
 

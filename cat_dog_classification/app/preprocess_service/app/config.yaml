@@ -1,0 +1,6 @@
+experiment_id: CAT-DOG
+
+model_input_name: 'sequential_1_input'
+model_output_name: 'sequential_3'
+
+use_queue: False
