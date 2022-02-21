@@ -1,6 +1,6 @@
-# Criação de microserviços com IA, utilizando Python.
+# Criação de microsserviços com IA, utilizando Python.
 
-Este respositorio tem o proposito de servir como acompanhamento para o minicurso ministrado na SDC, que aborda a criação de microserviços com IA, utilizando Python. O tema do minicurso vai ser o desenvolvimento de um microserviço capaz de classificar corretamente uma imagem em duas classes, Gato ou Cachorro. Seram utilizados alguns pacotes como tensorflow, grpc. A API sera criada utilizando FastAPI. Esse ReadMe tem a função de servir tambem como um guia de acompanhamento para o minicurso e vai ficar disponivel para o futuro, caso você queira rever algo quando desejar estudar novamente.
+Este respositorio tem o proposito de servir como acompanhamento para o minicurso ministrado na SDC, que aborda a criação de microsserviços com IA, utilizando Python. O tema do minicurso vai ser o desenvolvimento de um microsserviço capaz de classificar corretamente uma imagem em duas classes, Gato ou Cachorro. Seram utilizados alguns pacotes como tensorflow, grpc. A API sera criada utilizando FastAPI. Esse ReadMe tem a função de servir tambem como um guia de acompanhamento para o minicurso e vai ficar disponivel para o futuro, caso você queira rever algo quando desejar estudar novamente.
 
 ## Overview
 
@@ -73,7 +73,7 @@ Por fim, com todos os requisitos, vamos organizar nosso ambiente de desenvolvime
 
 4. Uma vez terminada a instalação dos requisitos, abra o Visual Studio Code. Navege na barra lateral para a aba de "Extensões" (Ctrl+Shitf+X).
 
-5. Busque e intale as extenções: Docker, Python e Pylance. Todas fornecidas pela Microsoft. Caso necessario reinicie o Visual Studio Code.
+5. Busque e instale as extensões: Docker, Python e Pylance. Todas fornecidas pela Microsoft. Caso necessario reinicie o Visual Studio Code.
 
 6. Com o Visual Studio Code abra a pasta cat_dog_classification (Ctrl+K+O) do repositorio baixado.
 
@@ -87,9 +87,9 @@ Como foi mencionado anteriormente vamos utilizar imagens Docker como fundação 
 
 Para a implementação do nosso microsserviço que utiliza um modelo de redes neurais teremos duas imagens Docker. Uma delas fica responsavel unicamente para servir de container para nosso modelo. Para essa imagen faremos uso do TensorFlow Serving, ele é um sistema de serviço flexível e de alto desempenho para modelos de aprendizado de máquina, projetado para ambientes de produção. O TensorFlow Serving facilita a implantação de novos algoritmos e experimentos, mantendo a mesma arquitetura de servidor e APIs.
 
-A outra imagem Docker é responsavel pelo proprio processamento do nosso serviço. É essa a imagem que onde o fluxo do microserviço vai ser desenvolvido. É nessa imagem tambem que as requições vão chegar e os retornos irão ocorrer.
+A outra imagem Docker é responsavel pelo proprio processamento do nosso serviço. É essa a imagem que onde o fluxo do microsserviço vai ser desenvolvido. É nessa imagem tambem que as requições vão chegar e os retornos irão ocorrer.
 
-As configurações das imagens Docker podem ser encontradas navegando para o diretorio "app" e em seguida para "model_service" ou "preprocess_service", nos arquivos nomeeados "Dockerfile". Vamos primeiro focar na configuração da imagem que vai hospedar nosso modelo.
+As configurações das imagens Docker podem ser encontradas navegando para o diretório"app" e em seguida para "model_service" ou "preprocess_service", nos arquivos nomeeados "Dockerfile". Vamos primeiro focar na configuração da imagem que vai hospedar nosso modelo.
 
 ![Docekrfile_model_service](/images/model_service_dockerfile.png "Arquivo Dockerfile do model_service.")
 
@@ -105,7 +105,7 @@ Uma descrição linha por linha do codigo seria:
 
 11-14: Configurações de conexão.
 
-Note que dentro do diretorio "prev_trained_models" temos o modelo de classificação treinado. O modelo precisa estar no formato ".pb", o formato utilizado no tensorflow.
+Note que dentro do diretório "prev_trained_models" temos o modelo de classificação treinado. O modelo precisa estar no formato ".pb", o formato utilizado no tensorflow.
 
 Em seguida passamos para o Dockerfile da imagem do "preprocess_service".
 
@@ -119,7 +119,7 @@ Novamente segue o passo a passo de cada linha:
 
 5-6: Atualização do apt-get da imagem Docker, e instalação de algumas dependencias.
 
-8: Definição do diretorio base dentro da imagem.
+8: Definição do diretório base dentro da imagem.
 
 10-11: Copiar os pacotes Python necessarios da maquina local para a imagem, e realizar a instalação.
 
@@ -130,9 +130,9 @@ Novamente segue o passo a passo de cada linha:
 17: Executar microsserviço.
 
 
-Por fim vamos configurar o arquivo docker-compose.yml que pode ser encontrado no diretorio "app". O arquivo de compose contem as configurações necessarias para a aexecução de um serviço com mais de um container. No nosso caso, como temos um container para o nosso modelo e um container para nosso serviço precisamos integrar os dois por meio deste arquivo.
+Por fim vamos configurar o arquivo docker-compose.yml que pode ser encontrado no diretório "app". O arquivo de compose contem as configurações necessarias para a execução de um serviço com mais de um container. No nosso caso, como temos um container para o nosso modelo e um container para nosso serviço precisamos integrar os dois por meio deste arquivo.
 
-![Docekrfile_compose](/images/docker-compose-yml.png "Arquivo docker-compose dos microserviços.")
+![Docekrfile_compose](/images/docker-compose-yml.png "Arquivo docker-compose dos microsserviços.")
 
 Nesse arquivo temos:
 
@@ -149,13 +149,13 @@ Com os arquivos de configuração finalizados podemos então passar para a proxi
 
 ## Desenvolvimento do microsserviço.
 
-Como mencionado anteriormente a parte de preprocessamento do nosso microserviço vai ser executado num container docker exclusivo. Nos configuramos esse arquivo Dockerfile no passo anterior. Agora é o momento de desenvolver nosso microsserviço. Para isso navegue até o diretorio "app->preprocess_service->app". Aqui você vai ver os seguintes arquivos:
+Como mencionado anteriormente a parte de preprocessamento do nosso microsserviço vai ser executado num container docker exclusivo. Nos configuramos esse arquivo Dockerfile no passo anterior. Agora é o momento de desenvolver nosso microsserviço. Para isso navegue até o diretório "app->preprocess_service->app". Aqui você vai ver os seguintes arquivos:
 
 1. app_server.py: É aqui que vamos definir o nosso microsserviço, o que acontece quando uma nova requisição é recebida e qual o retorno deve ser dado no fim.
 2. model_runner.py: Aqui estão os metodos referentes a integração com o container do modelo. Neste arquivo que são definidas as funções que fazem a classificação com o modelo de inteligencia artificial.
 3. utils.py: O arquivo de utils tem algumas funções de preprocessamento. A fim de melhorar a legibilidade do codigo, essas funções foram separadas em um arquivo diferente do aoo_server.py
 
-Vamos falar um pouco mais sobre cada um desses arquivos separamente, a começar com o app_server.py, o nucleo principal do nosso microserviço. Primeiramente vamos começar com os imports, e a definiçaõ de algumas classes e Enums.
+Vamos falar um pouco mais sobre cada um desses arquivos separamente, a começar com o app_server.py, o nucleo principal do nosso microsserviço. Primeiramente vamos começar com os imports, e a definiçaõ de algumas classes e Enums.
 
 ![App_server1.py](/images/app_server1.png "Primeira parte do arquivo app_server.py.")
 
@@ -227,11 +227,9 @@ Vamos passar para o ultimo estagio no ciclo de criação de um micorsserviço, o
 
 ## Criação de testes.
 
+Testar o microsserviço é uma etapa importante no ciclo de produção. Os testes não só nos ajudam a identificar erros quanto servem para manter o microsserviço funcionando a medida que novas verções vão surgindo. Para criarmos os testes em python vamos fazer uso do pacote unittest.
 
-
-Testar o microserviço é uma etapa importante no ciclo de produção. Os testes não só nos ajudam a identificar erros quanto servem para manter o microserviço funcionando a medida que novas verções vão surgindo. Para criarmos os testes em python vamos fazer uso do pacote unittest.
-
-Os testes devem estar contidos no diretorio "unit_test", aqui temos dois arquivos, o "utils.py" e o "localhost_test.py". O primeiro assim como no serviço contem algumas funções auxiliares. Enquanto o segundo define os testes. Vamos começar vendo o arquivo "utils.py".
+Os testes devem estar contidos no diretório "unit_test", aqui temos dois arquivos, o "utils.py" e o "localhost_test.py". O primeiro assim como no serviço contem algumas funções auxiliares. Enquanto o segundo define os testes. Vamos começar vendo o arquivo "utils.py".
 
 ![Test_utils.py](/images/test_utils.png "Arquivo utils.py dos testes.")
 
@@ -260,7 +258,7 @@ Vendo cada linha de codigo temos:
 
 Com os testes definidos podemos executa-los direto do Visual Studio Code. Para executar os testes realize os seguintes passos:
 
-1. Primeiramente no Visual Studio Code abra o diretorio "cat_dog_classification" (Ctrl+K+O). 
+1. Primeiramente no Visual Studio Code abra o diretório "cat_dog_classification" (Ctrl+K+O). 
 2. Pressione Ctrl + Shit + P, e selecione a opção "Python:Select Interpreter", em seguida selecione o ambiente "minicurso".
 3. Pressione Ctrl + Shit + P novamente e agora selecione a opção "Python:Configure Tests", em seguida selecione "unittest", "unittest" novamente e por fim "* test *.py".
 4. Navege na barra lateral esquerda para a aba de Testing abaixo da aba de extensões.
@@ -273,6 +271,6 @@ Para executar os testes basta clicar no icone triangular que aparece ao lado do 
 
 ## Considerações Finais
 
-Este é o fim da aprensentação, note que ainda existem muitas coisas abstraidas e que podem ser melhoradas nesse microserviço. Enquanto muitos dos assuntos abordados podem ser complexos é recomendado que você tire um tempo para estudar a documentação dos pacotes utilizados. Este documento e o repositorio permaneceção aqui para servir de material de estudo futuro caso seja de interesse.
+Este é o fim da aprensentação, note que ainda existem muitas coisas abstraidas e que podem ser melhoradas nesse microsserviço. Enquanto muitos dos assuntos abordados podem ser complexos é recomendado que você tire um tempo para estudar a documentação dos pacotes utilizados. Este documento e o repositorio permaneceção aqui para servir de material de estudo futuro caso seja de interesse.
 
 Obrigado pela participação de todos!
